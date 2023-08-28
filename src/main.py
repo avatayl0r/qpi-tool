@@ -10,9 +10,6 @@ import argparse
 
 class QuickProjectInit:
     def __init__(self, directory) -> None:
-        if isinstance(directory, list):
-            directory = directory[0]
-        print(directory)
         self.directory = directory
 
     def build_folders(self):
@@ -136,15 +133,20 @@ def display_version():
 
 def main():
     args = parser()
+    version = args.version
+    directory = args.build
 
-    if args.version:
+    if version:
         display_version()
         return True
 
-    if not args.build[0]:
+    if isinstance(directory, list):
+        directory = args.build[0]
+
+    if not directory:
         return False
 
-    qpi = QuickProjectInit(args.build)
+    qpi = QuickProjectInit(directory=directory)
     qpi.build_folders()
     qpi.build_readme_files()
     qpi.build_gitignore()
@@ -153,6 +155,8 @@ def main():
         qpi.build_requirements()
         qpi.build_pyproject()
         qpi.build_pyfiles()
+
+    print(f"Successfully built project at: '{directory}'")
 
 if __name__ == "__main__":
     main()
