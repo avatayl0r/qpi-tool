@@ -1,10 +1,19 @@
+__author__ = "Aryn Taylor"
+__email__ = "aryntaylor2021@gmail.com"
+__version__ = "v1.0.0"
+__project__ = "Quick Project Initialiser"
+__copyright__ = f"© 2023 By {__author__}"
+
 import os
 import argparse
 
 
 class QuickProjectInit:
     def __init__(self, directory) -> None:
-        self.directory = directory[0]
+        if isinstance(directory, list):
+            directory = directory[0]
+        print(directory)
+        self.directory = directory
 
     def build_folders(self):
         folders = ["src", "tests"]
@@ -95,23 +104,51 @@ class QuickProjectInit:
 
 
 def parser():
+    def dir_path(string):
+        if os.path.isdir(string):
+            return string
+        else:
+            print("Path must be valid!")
+            return None
+
     parser = argparse.ArgumentParser(
         prog="Quick Project Initialiser",
         description="QPI saves time by initiating new project files."
     )
     parser.add_argument(
-        '-b', '--build', nargs=1, default=str(os.getcwd()), type=str)
+        '-v', '--version', action="store_true")
     parser.add_argument(
-        '-py', '--pysetup', nargs=1, default=False, type=bool
-    )
+        '-b', '--build', nargs=1, default=str(os.getcwd()), type=dir_path)
+    parser.add_argument(
+        '-py', '--pysetup', action="store_true")
     return parser.parse_args()
+
+def display_version():
+    header_line = ""
+    for char in __project__:
+        header_line += "-"
+    print(header_line)
+    print(__project__)
+    print(__copyright__)
+    print(__email__)
+    print(__version__)
+    print(header_line)
 
 def main():
     args = parser()
+
+    if args.version:
+        display_version()
+        return True
+
+    if not args.build[0]:
+        return False
+
     qpi = QuickProjectInit(args.build)
     qpi.build_folders()
     qpi.build_readme_files()
     qpi.build_gitignore()
+
     if args.pysetup:
         qpi.build_requirements()
         qpi.build_pyproject()
