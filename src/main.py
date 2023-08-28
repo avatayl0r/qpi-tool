@@ -1,6 +1,7 @@
 import os
 import argparse
 
+
 class QuickProjectInit:
     def __init__(self, directory) -> None:
         self.directory = directory[0]
@@ -10,17 +11,25 @@ class QuickProjectInit:
         os.chdir(self.directory)
 
         for folder in folders:
+
             if not os.path.exists(folder):
                 os.mkdir(folder)
 
     def build_readme_files(self):
         folders = ["src","tests",self.directory]
-        
+
         for folder in folders:
             os.chdir(self.directory)
+
+            if not os.path.exists(folder):
+                return False
+
             os.chdir(folder)
+
             if not os.path.exists("README.md"):
                 open("README.md", "a").close()
+
+        os.chdir(self.directory)
 
     def build_gitignore(self):
         os.chdir(self.directory)
@@ -29,11 +38,16 @@ class QuickProjectInit:
 
     def build_requirements(self):
         os.chdir(self.directory)
+
         if not os.path.exists("requirements.txt"):
-            open("requirements.txt", "a").close()        
+            with open("requirements.txt", "a") as file:
+                content = [
+                    "setuptools >= 21.0.0"
+                    ]
 
     def build_pyproject(self):
         os.chdir(self.directory)
+
         if not os.path.exists("pyproject.toml"):
             with open("pyproject.toml", "a") as file:
                 content = [
@@ -56,10 +70,34 @@ class QuickProjectInit:
                 ]
                 file.writelines(line + "\n" for line in content)
 
+    def build_pyfiles(self):
+        folders = ["src", "tests"]
+
+        for folder in folders:
+            os.chdir(self.directory)
+
+            if not os.path.exists(folder):
+                return False
+
+            os.chdir(folder)
+
+            if not os.path.exists("__init__.py"):
+                open("__init__.py", "a").close()
+
+            if folder == "src":
+                if not os.path.exists("main.py"):
+                    open("main.py", "a").close()
+            elif folder == "tests":
+                if not os.path.exists("test_main.py"):
+                    open("test_main.py", "a").close()
+
+        os.chdir(self.directory)
+
+
 def parser():
     parser = argparse.ArgumentParser(
         prog="Quick Project Initialiser",
-        description="QPI is a tool I created to save time when building a new project."
+        description="QPI saves time by initiating new project files."
     )
     parser.add_argument(
         '-b', '--build', nargs=1, default=str(os.getcwd()), type=str)
@@ -77,6 +115,7 @@ def main():
     if args.pysetup:
         qpi.build_requirements()
         qpi.build_pyproject()
+        qpi.build_pyfiles()
 
 if __name__ == "__main__":
     main()
