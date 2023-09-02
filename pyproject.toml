@@ -1,6 +1,6 @@
 [project]
-name = "project_name"
-description = "description"
+name = "qpi"
+description = "qpi-tool"
 version = "1.1.0"
 
 [build-system]
