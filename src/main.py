@@ -50,6 +50,7 @@ class QuickProjectInit:
                 content = [
                     "setuptools >= 21.0.0"
                     ]
+                file.writelines(line + "\n" for line in content)
 
     def build_pyproject(self):
         os.chdir(self.directory)
